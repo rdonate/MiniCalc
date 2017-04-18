@@ -56,10 +56,8 @@ class Suma(Arbol):
     self.i.compsemanticas()
     self.d.compsemanticas()
     if self.i.tipo!= self.d.tipo:
-      if self.i.tipo =="real" and self.d.tipo=="entero":
-        pass
-      elif self.i.tipo =="entero" and self.d.tipo=="real":
-        pass
+      if (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
+        self.tipo=tipos.Real
       else:
         raise errores.ErrorSemantico("No puedo sumar peras con limones ni cadenas con enteros")
     self.tipo= self.i.tipo
@@ -79,10 +77,8 @@ class Resta(Arbol):
     self.i.compsemanticas()
     self.d.compsemanticas()
     if self.i.tipo!= self.d.tipo:
-      if self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero:
+      if (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
         self.tipo=tipos.Real
-      elif self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real:
-        self.tipo = tipos.Real
       else:
         raise errores.ErrorSemantico("No puedo restar peras con limones ni cadenas con enteros")
     if self.tipo!=tipos.Real:
@@ -109,11 +105,7 @@ class Producto(Arbol):
       raise errores.ErrorSemantico("¿Y cómo multiplico yo dos cadenas?")
     if self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
       self.tipo= tipos.Entero
-    elif self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero:
-      self.tipo=tipos.Real
-    elif self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real:
-      self.tipo=tipos.Real
-    elif self.i.tipo==tipos.Real and self.d.tipo==tipos.Real:
+    elif (self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real) or (self.i.tipo==tipos.Real and self.d.tipo==tipos.Real):
       self.tipo=tipos.Real
     else:
       self.tipo= tipos.Cadena
@@ -136,11 +128,7 @@ class Division(Arbol):
       raise errores.ErrorSemantico("¿Y cómo divido yo dos cadenas?")
     if self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
       self.tipo= tipos.Entero
-    elif self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero:
-      self.tipo=tipos.Real
-    elif self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real:
-      self.tipo=tipos.Real
-    elif self.i.tipo==tipos.Real and self.d.tipo==tipos.Real:
+    elif (self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real) or (self.i.tipo==tipos.Real and self.d.tipo==tipos.Real):
       self.tipo=tipos.Real
     else:
       self.tipo= tipos.Cadena
