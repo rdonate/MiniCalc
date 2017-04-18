@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import errores
+import flujo
+import lexico
+import sintactico
+import sintacticoAST
+import sintacticoArbolDerivacion
+
+import sys
+l= sys.stdin.readline()
+while l!= "":
+  f = flujo.Flujo(l)
+  try:
+    lex = lexico.Lexico(f)
+    if len(sys.argv)>=2:
+      if sys.argv[1]=="-l":
+        while True:
+          componente = lex.siguiente()
+          print componente
+          if componente.cat == "eof":
+            break
+      elif sys.argv[1]=="-a":
+        S = sintacticoArbolDerivacion.Sintactico(lex)
+        arbol = S.analizaLinea()
+        arbol.compsemanticas()
+        print arbol.evalua()
+      elif sys.argv[1]=="-s":
+        S = sintacticoAST.Sintactico(lex)
+        arbol = S.analizaLinea()
+        arbol.compsemanticas()
+        print arbol.evalua()
+    else:
+      S= sintactico.Sintactico(lex)
+      arbol= S.analizaLinea()
+      arbol.compsemanticas()
+      print arbol.evalua()
+  except errores.Error, err:
+    sys.stderr.write("%s\n" % err)
+    if err.__class__.__name__ in ["ErrorLexico", "ErrorSintactico"]:
+      lex.muestraError(sys.stderr)
+  l= sys.stdin.readline()
