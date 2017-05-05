@@ -76,13 +76,15 @@ class Resta(Arbol):
   def compsemanticas(self):
     self.i.compsemanticas()
     self.d.compsemanticas()
-    if self.i.tipo!= self.d.tipo:
-      if (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
-        self.tipo=tipos.Real
-      else:
-        raise errores.ErrorSemantico("No puedo restar peras con limones ni cadenas con enteros")
-    if self.tipo!=tipos.Real:
+    if self.i.tipo== self.d.tipo:
+      self.tipo=self.i.tipo
+    elif (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
+      self.tipo=tipos.Real
+    elif self.tipo!=tipos.Real:
       self.tipo= self.i.tipo
+    else:
+      raise errores.ErrorSemantico("No puedo restar peras con limones ni cadenas con enteros")
+
 
   def evalua(self):
     return self.i.evalua()-self.d.evalua()
@@ -103,7 +105,7 @@ class Producto(Arbol):
     self.d.compsemanticas()
     if self.i.tipo==tipos.Cadena and self.d.tipo==tipos.Cadena:
       raise errores.ErrorSemantico("¿Y cómo multiplico yo dos cadenas?")
-    if self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
+    elif self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
       self.tipo= tipos.Entero
     elif (self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real) or (self.i.tipo==tipos.Real and self.d.tipo==tipos.Real):
       self.tipo=tipos.Real
