@@ -49,6 +49,7 @@ class Cadena(Arbol):
 
 class Suma(Arbol):
   def __init__(self, i, d):
+    self.operacion='+'
     self.i= i
     self.d= d
 
@@ -70,6 +71,7 @@ class Suma(Arbol):
 
 class Resta(Arbol):
   def __init__(self, i, d):
+    self.operacion='-'
     self.i= i
     self.d= d
 
@@ -92,8 +94,27 @@ class Resta(Arbol):
   def __str__(self):
     return "(%s-%s)" % (self.i, self.d)
 
+class CambioSigno(Arbol):
+  def __init__(self,operacion , i):
+    self.operacion=operacion
+    self.i=i
+
+  def compsemanticas(self):
+    self.tipo=tipos.Entero
+
+  def evalua(self):
+    if (self.operacion=='+'):
+      return self.i
+    elif (self.operacion=='-'):
+      return (self.i*(-1))
+
+
+  def __str__(self):
+    return "(-%s)"%self.i
+
 class Producto(Arbol):
   def __init__(self, i, d):
+    self.operacion='*'
     self.i= i
     self.d= d
 
@@ -117,6 +138,7 @@ class Producto(Arbol):
 
 class Division(Arbol):
   def __init__(self, i, d):
+    self.operacion='/'
     self.i= i
     self.d= d
 
