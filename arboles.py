@@ -116,6 +116,29 @@ class CambioSigno(Arbol):
   def __str__(self):
     return "(%s%s)"%(self.operacion,self.i)
 
+class ValorAbsoluto(Arbol):
+  def __init__(self,i):
+    self.i=i
+
+  def compsemanticas(self):
+    self.i.compsemanticas()
+    if (self.i.tipo==tipos.Real):
+        self.tipo=self.i.tipo
+    else:
+        self.tipo=tipos.Entero
+
+  def evalua(self):
+    if (self.i.tipo==tipos.Cadena):
+      return len(self.i.evalua())
+    elif (self.i.operacion=='-'):
+      return (self.i.evalua()*(-1))
+    else:
+      return (self.i.evalua())
+
+
+  def __str__(self):
+    return "(|%s|)"%self.i
+
 class Producto(Arbol):
   def __init__(self, i, d):
     self.operacion='*'

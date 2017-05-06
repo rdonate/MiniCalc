@@ -101,7 +101,7 @@ class Lexico:
         #l=l[1:]
         self.flujo.devuelve(c)
         q = 12
-        return componentes.abrirBarra()
+        return componentes.barra()
       elif q==12:
         if c and c in string.digits:
           q=13

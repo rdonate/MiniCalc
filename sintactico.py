@@ -67,14 +67,11 @@ class Sintactico:
       arbol= arboles.Cadena(self.componente.valor)
       self.componente= self.lexico.siguiente()
       return arbol
-    elif self.componente.cat=="abrirBarra":
+    elif self.componente.cat=="barra":
       self.componente = self.lexico.siguiente()
-      if self.componente.cat=="opad":
-        self.componente = self.lexico.siguiente()
-      elif self.componente.cat=="cadena":
-        self.componente=componentes.entero(len(self.componente.valor))
-      arbol = self.analizaExpresion()
-      if self.componente.cat!="abrirBarra":
+      componente = self.analizaExpresion()
+      arbol=arboles.ValorAbsoluto(componente)
+      if self.componente.cat!="barra":
         raise ErrorSintactico("Aquí tocaba cerrar una barra.")
       self.componente = self.lexico.siguiente()
       return arbol

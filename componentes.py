@@ -30,10 +30,7 @@ class opmul(Componente):
 class nl(Componente):
   pass
 
-class abrirBarra(Componente):
-  pass
-
-class cerrarBarra(Componente):
+class barra(Componente):
   pass
 
 class eof(Componente):
