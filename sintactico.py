@@ -69,9 +69,8 @@ class Sintactico:
       return arbol
     elif self.componente.cat=="abrirBarra":
       self.componente = self.lexico.siguiente()
-      if self.componente.cat=="opad" and self.componente.operacion=="-":
+      if self.componente.cat=="opad":
         self.componente = self.lexico.siguiente()
-        self.componente.valor=self.componente.valor*-1
       elif self.componente.cat=="cadena":
         self.componente=componentes.entero(len(self.componente.valor))
       arbol = self.analizaExpresion()
@@ -80,12 +79,10 @@ class Sintactico:
       self.componente = self.lexico.siguiente()
       return arbol
     elif self.componente.cat=="opad":
-      #self.componente=componentes.opad(self.componente.valor)
       operacion = self.componente
       self.componente = self.lexico.siguiente()
-      #arbol = self.analizaFactor()
-      arbol=arboles.CambioSigno(operacion.operacion,self.componente.valor)
-      self.componente = self.lexico.siguiente()
+      componente = self.analizaFactor()
+      arbol=arboles.CambioSigno(operacion.operacion,componente)
       return arbol
     else:
       raise ErrorSintactico("La verdad, no sé qué hacer con esto.")

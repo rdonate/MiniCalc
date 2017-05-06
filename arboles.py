@@ -100,17 +100,21 @@ class CambioSigno(Arbol):
     self.i=i
 
   def compsemanticas(self):
-    self.tipo=tipos.Entero
+    self.i.compsemanticas()
+    if (self.i.tipo!=tipos.Cadena):
+        self.tipo=self.i.tipo
+    else:
+        raise errores.ErrorSemantico("No se puede cambiar el signo de una cadenas")
 
   def evalua(self):
     if (self.operacion=='+'):
-      return self.i
+      return self.i.evalua()
     elif (self.operacion=='-'):
-      return (self.i*(-1))
+      return (self.i.evalua()*(-1))
 
 
   def __str__(self):
-    return "(-%s)"%self.i
+    return "(%s%s)"%(self.operacion,self.i)
 
 class Producto(Arbol):
   def __init__(self, i, d):
