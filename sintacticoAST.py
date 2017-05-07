@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import arboles
+import arbolesAST
 from errores import Error, ErrorSintactico
 import flujo
 import lexico
 import sys
 import componentes
-
 
 class Sintactico:
   def __init__(self, lexico):
@@ -26,11 +25,11 @@ class Sintactico:
       if self.componente.operacion=="+":
         self.componente = self.lexico.siguiente()
         sumando = self.analizaTermino()
-        arbol = arboles.Suma(arbol, sumando)
+        arbol = arbolesAST.Suma(arbol, sumando)
       elif self.componente.operacion=="-":
         self.componente = self.lexico.siguiente()
         sumando = self.analizaTermino()
-        arbol = arboles.Resta(arbol, sumando)
+        arbol = arbolesAST.Resta(arbol, sumando)
       else:
         raise ErrorSintactico("La operación no es correcta con suma o resta")
     return arbol
@@ -41,11 +40,11 @@ class Sintactico:
       if self.componente.operacion=="*":
         self.componente = self.lexico.siguiente()
         factor = self.analizaFactor()
-        arbol= arboles.Producto(arbol, factor)
+        arbol= arbolesAST.Producto(arbol, factor)
       elif self.componente.operacion=="/":
         self.componente = self.lexico.siguiente()
         factor = self.analizaFactor()
-        arbol = arboles.Division(arbol, factor)
+        arbol = arbolesAST.Division(arbol, factor)
     return arbol
 
   def analizaFactor(self):
@@ -57,32 +56,30 @@ class Sintactico:
       self.componente= self.lexico.siguiente()
       return arbol
     elif self.componente.cat=="entero":
-      arbol= arboles.Entero(self.componente.valor)
+      arbol= arbolesAST.Entero(self.componente.valor)
       self.componente= self.lexico.siguiente()
       return arbol
     elif self.componente.cat=="real":
-      arbol = arboles.Real(self.componente.valor)
+      arbol = arbolesAST.Real(self.componente.valor)
       self.componente = self.lexico.siguiente()
       return arbol
     elif self.componente.cat=="cadena":
-      arbol= arboles.Cadena(self.componente.valor)
+      arbol= arbolesAST.Cadena(self.componente.valor)
       self.componente= self.lexico.siguiente()
       return arbol
-    elif self.componente.cat=="abrirBarra":
+    elif self.componente.cat=="barra":
       self.componente = self.lexico.siguiente()
-      if self.componente.cat=="opad" and self.componente.operacion=="-":
-        self.componente = self.lexico.siguiente()
-        self.componente.valor=self.componente.valor*-1
-      elif self.componente.cat=="cadena":
-        self.componente=componentes.entero(len(self.componente.valor))
-      arbol = self.analizaExpresion()
-      if self.componente.cat!="abrirBarra":
+      componente = self.analizaExpresion()
+      arbol=arbolesAST.ValorAbsoluto(componente)
+      if self.componente.cat!="barra":
         raise ErrorSintactico("Aquí tocaba cerrar una barra.")
       self.componente = self.lexico.siguiente()
       return arbol
     elif self.componente.cat=="opad":
-      self.componente = self.lexico.siguiente
-      arbol = self.analizaFactor()
+      operacion = self.componente
+      self.componente = self.lexico.siguiente()
+      componente = self.analizaFactor()
+      arbol=arbolesAST.CambioSigno(operacion.operacion,componente)
       return arbol
     else:
       raise ErrorSintactico("La verdad, no sé qué hacer con esto.")

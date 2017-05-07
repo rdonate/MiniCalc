@@ -16,7 +16,7 @@ class Entero(Arbol):
     self.tipo= tipos.Entero
 
   def evalua(self):
-    return self.v
+    return '("'+str(self.v)+'")'
 
   def __str__(self):
     return str(self.v)
@@ -29,7 +29,7 @@ class Real(Arbol):
     self.tipo= tipos.Real
 
   def evalua(self):
-    return self.v
+    return '("'+str(self.v)+'")'
 
   def __str__(self):
     return str(self.v)
@@ -42,7 +42,9 @@ class Cadena(Arbol):
     self.tipo= tipos.Cadena
 
   def evalua(self):
-    return self.v
+    if ('"' in self.v):
+      a=self.v.find('"')
+    return '("'+self.v+'")'
 
   def __str__(self):
     return '"%s"' % self.v
@@ -64,7 +66,7 @@ class Suma(Arbol):
     self.tipo= self.i.tipo
 
   def evalua(self):
-    return self.i.evalua()+self.d.evalua()
+    return '('+'"+" '+ self.i.evalua()+' '+self.d.evalua()+')'
 
   def __str__(self):
     return "(%s+%s)" % (self.i, self.d)
@@ -89,7 +91,7 @@ class Resta(Arbol):
 
 
   def evalua(self):
-    return self.i.evalua()-self.d.evalua()
+    return '(' + '"-" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
 
   def __str__(self):
     return "(%s-%s)" % (self.i, self.d)
@@ -107,10 +109,7 @@ class CambioSigno(Arbol):
         raise errores.ErrorSemantico("No se puede cambiar el signo de una cadenas")
 
   def evalua(self):
-    if (self.operacion=='+'):
-      return self.i.evalua()
-    elif (self.operacion=='-'):
-      return (self.i.evalua()*(-1))
+    return '(' + '"'+self.operacion+'" ' + self.i.evalua() + ')'
 
 
   def __str__(self):
@@ -128,12 +127,7 @@ class ValorAbsoluto(Arbol):
         self.tipo=tipos.Entero
 
   def evalua(self):
-    if (self.i.tipo==tipos.Cadena):
-      return len(self.i.evalua())
-    elif (self.i.operacion=='-'):
-      return (self.i.evalua()*(-1))
-    else:
-      return (self.i.evalua())
+    return '(' + '"| |" ' + self.i.evalua() + ')'
 
 
   def __str__(self):
@@ -146,12 +140,7 @@ class Producto(Arbol):
     self.d= d
 
   def evalua(self):
-    if(self.tipo==tipos.Cadena):
-      if (self.i.tipo==tipos.Real):
-        return int(self.i.evalua())*self.d.evalua()
-      elif (self.d.tipo==tipos.Real):
-        return self.i.evalua()*int(self.d.evalua())
-    return self.i.evalua()*self.d.evalua()
+    return '(' + '"*" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
 
   def compsemanticas(self):
     self.i.compsemanticas()
@@ -175,7 +164,7 @@ class Division(Arbol):
     self.d= d
 
   def evalua(self):
-    return self.i.evalua()/self.d.evalua()
+    return '(' + '"/" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
 
   def compsemanticas(self):
     self.i.compsemanticas()
