@@ -8,202 +8,102 @@ import tipos
 class Arbol:
   pass
 
-class Entero(Arbol):
+class entero(Arbol):
   def __init__(self, v):
     self.v= v
 
-  def compsemanticas(self):
-    self.tipo= tipos.Entero
-
   def evalua(self):
-    return '("'+self.tipo+'")'
+    return '("' + self.__class__.__name__ + '")'
 
-  def __str__(self):
-    return str(self.v)
-
-class Real(Arbol):
+class real(Arbol):
   def __init__(self, v):
     self.v= v
 
-  def compsemanticas(self):
-    self.tipo= tipos.Real
-
   def evalua(self):
-    return '("'+self.tipo+'")'
+    return '("'+self.__class__.__name__+'")'
 
-  def __str__(self):
-    return str(self.v)
-
-class Cadena(Arbol):
+class cadena(Arbol):
   def __init__(self, v):
     self.v= v
 
-  def compsemanticas(self):
-    self.tipo= tipos.Cadena
+  def evalua(self):
+    return '("' + self.__class__.__name__ + '")'
+
+class opad(Arbol):
+  def __init__(self, i,d):
+    self.i = i
+    self.d = d
 
   def evalua(self):
-    return '("'+self.tipo+'")'
+    return '("' + self.__class__.__name__ + '") ' + self.d.evalua()
 
-  def __str__(self):
-    return '"%s"' % self.v
-
-class Suma(Arbol):
-  def __init__(self, i, d):
-    self.operacion='+'
-    self.i= i
-    self.d= d
-
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    self.d.compsemanticas()
-    if self.i.tipo!= self.d.tipo:
-      if (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
-        self.tipo=tipos.Real
-      else:
-        raise errores.ErrorSemantico("No puedo sumar peras con limones ni cadenas con enteros")
-    self.tipo= self.i.tipo
+class nl(Arbol):
+  def __init__(self):
+    pass
 
   def evalua(self):
-    return '('+'"'+str(self.__class__).split(".")[-1]+'" '+ self.i.evalua()+' '+self.d.evalua()+')'
+    return '("'+self.__class__.__name__+'")'
 
-  def __str__(self):
-    return "(%s+%s)" % (self.i, self.d)
-
-class Resta(Arbol):
-  def __init__(self, i, d):
-    self.operacion='-'
-    self.i= i
-    self.d= d
-
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    self.d.compsemanticas()
-    if self.i.tipo== self.d.tipo:
-      self.tipo=self.i.tipo
-    elif (self.i.tipo ==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo ==tipos.Entero and self.d.tipo==tipos.Real):
-      self.tipo=tipos.Real
-    elif self.tipo!=tipos.Real:
-      self.tipo= self.i.tipo
-    else:
-      raise errores.ErrorSemantico("No puedo restar peras con limones ni cadenas con enteros")
-
+class opmul(Arbol):
+  def __init__(self, i,d):
+    self.i = i
+    self.d = d
 
   def evalua(self):
-    return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
+    return '("' + self.__class__.__name__ + '") ' + self.d.evalua()
 
-  def __str__(self):
-    return "(%s-%s)" % (self.i, self.d)
-
-class CambioSigno(Arbol):
-  def __init__(self,operacion , i):
-    self.operacion=operacion
+class apar(Arbol):
+  def __init__(self,i,d):
     self.i=i
-
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    if (self.i.tipo!=tipos.Cadena):
-        self.tipo=self.i.tipo
-    else:
-        raise errores.ErrorSemantico("No se puede cambiar el signo de una cadenas")
+    self.d=d
 
   def evalua(self):
-    return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + ')'
+    return '(("' + self.__class__.__name__ +'") '+self.i.evalua()+' '+ ' ' + self.d.evalua()+ ')'
 
+class cpar(Arbol):
+  def __init__(self):
+    pass
 
-  def __str__(self):
-    return "(%s%s)"%(self.operacion,self.i)
+  def evalua(self):
+    return '("' + self.__class__.__name__ + '")'
 
-class ValorAbsoluto(Arbol):
+class barra(Arbol):
   def __init__(self,i):
     self.i=i
 
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    if (self.i.tipo==tipos.Real):
-        self.tipo=self.i.tipo
-    else:
-        self.tipo=tipos.Entero
+  def evalua(self):
+    return '("' + self.__class__.__name__ +'") '+self.i.evalua()+' ("'+self.__class__.__name__+ '")'
+
+class Linea(Arbol):
+  def __init__(self,i,d):
+    self.i=i
+    self.d=d
 
   def evalua(self):
-    return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + ')'
+    return '("' + self.__class__.__name__ + '" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
 
-
-  def __str__(self):
-    return "(|%s|)"%self.i
-
-class Producto(Arbol):
-  def __init__(self, i, d):
-    self.operacion='*'
-    self.i= i
-    self.d= d
+class Expresion(Arbol):
+  def __init__(self,i,d):
+    self.i=i
+    self.d=d
 
   def evalua(self):
-    return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
+    return '("'+self.__class__.__name__+'" '+self.i.evalua()+' '+self.d.evalua()+')'
 
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    self.d.compsemanticas()
-    if self.i.tipo==tipos.Cadena and self.d.tipo==tipos.Cadena:
-      raise errores.ErrorSemantico("¿Y cómo multiplico yo dos cadenas?")
-    elif self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
-      self.tipo= tipos.Entero
-    elif (self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real) or (self.i.tipo==tipos.Real and self.d.tipo==tipos.Real):
-      self.tipo=tipos.Real
-    else:
-      self.tipo= tipos.Cadena
-
-  def __str__(self):
-    return "(%s*%s)" % (self.i, self.d)
-
-class Division(Arbol):
-  def __init__(self, i, d):
-    self.operacion='/'
-    self.i= i
-    self.d= d
+class Termino(Arbol):
+  def __init__(self,i,d):
+    self.i=i
+    self.d=d
 
   def evalua(self):
-    return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
+    return '("'+self.__class__.__name__+'" '+self.i.evalua()+' '+self.d.evalua()+')'
 
-  def compsemanticas(self):
-    self.i.compsemanticas()
-    self.d.compsemanticas()
-    if self.i.tipo==tipos.Cadena and self.d.tipo==tipos.Cadena:
-      raise errores.ErrorSemantico("¿Y cómo divido yo dos cadenas?")
-    if self.i.tipo==tipos.Entero and self.d.tipo==tipos.Entero:
-      self.tipo= tipos.Entero
-    elif (self.i.tipo==tipos.Real and self.d.tipo==tipos.Entero) or (self.i.tipo==tipos.Entero and self.d.tipo==tipos.Real) or (self.i.tipo==tipos.Real and self.d.tipo==tipos.Real):
-      self.tipo=tipos.Real
-    else:
-      self.tipo= tipos.Cadena
+class Factor(Arbol):
+  def __init__(self,i):
+    self.i=i
 
-  def __str__(self):
-    return "(%s/%s)" % (self.i, self.d)
-
-  class Division(Arbol):
-    def __init__(self, i, d):
-      self.operacion = '/'
-      self.i = i
-      self.d = d
-
-    def evalua(self):
-      return '(' + '"' + str(self.__class__).split(".")[-1] + '" ' + self.i.evalua() + ' ' + self.d.evalua() + ')'
-
-    def compsemanticas(self):
-      self.i.compsemanticas()
-      self.d.compsemanticas()
-      if self.i.tipo == tipos.Cadena and self.d.tipo == tipos.Cadena:
-        raise errores.ErrorSemantico("¿Y cómo divido yo dos cadenas?")
-      if self.i.tipo == tipos.Entero and self.d.tipo == tipos.Entero:
-        self.tipo = tipos.Entero
-      elif (self.i.tipo == tipos.Real and self.d.tipo == tipos.Entero) or (
-          self.i.tipo == tipos.Entero and self.d.tipo == tipos.Real) or (
-          self.i.tipo == tipos.Real and self.d.tipo == tipos.Real):
-        self.tipo = tipos.Real
-      else:
-        self.tipo = tipos.Cadena
-
-    def __str__(self):
-      return "(%s/%s)" % (self.i, self.d)
+  def evalua(self):
+    return '("'+self.__class__.__name__+'" '+self.i.evalua()+')'
 
 def arbol():
   pass

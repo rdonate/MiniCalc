@@ -24,7 +24,6 @@ while l!= "":
       elif sys.argv[1]=="-a":
         S = sintacticoArbolDerivacion.Sintactico(lex)
         arbol = S.analizaLinea()
-        arbol.compsemanticas()
         print arbol.evalua()
       elif sys.argv[1]=="-s":
         S = sintacticoAST.Sintactico(lex)

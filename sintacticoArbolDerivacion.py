@@ -14,37 +14,35 @@ class Sintactico:
     self.componente= self.lexico.siguiente()
 
   def analizaLinea(self):
-    arbol= self.analizaExpresion()
+    expresion=self.analizaExpresion()
     if self.componente.cat!= "nl":
       raise ErrorSintactico("Ya tengo una expresión, ¿por qué no terminas la línea?")
+    arbol = arbolesArbolDerivacion.Linea(expresion,arbolesArbolDerivacion.nl())
+    self.componente = self.lexico.siguiente()
     return arbol
 
   def analizaExpresion(self):
     arbol= self.analizaTermino()
     while self.componente.cat== "opad":
-      if self.componente.operacion=="+":
-        self.componente = self.lexico.siguiente()
-        sumando = self.analizaTermino()
-        arbol = arbolesArbolDerivacion.Suma(arbol, sumando)
-      elif self.componente.operacion=="-":
-        self.componente = self.lexico.siguiente()
-        sumando = self.analizaTermino()
-        arbol = arbolesArbolDerivacion.Resta(arbol, sumando)
-      else:
-        raise ErrorSintactico("La operación no es correcta con suma o resta")
+      operacion=self.componente
+      self.componente=self.lexico.siguiente()
+      termino= self.analizaTermino()
+      #self.componente=self.lexico.siguiente()
+      opad=arbolesArbolDerivacion.opad(operacion,termino)
+      arbol=arbolesArbolDerivacion.Expresion(arbol,opad)
+    #self.componente = self.lexico.siguiente()
     return arbol
 
   def analizaTermino(self):
     arbol= self.analizaFactor()
     while self.componente.cat== "opmul":
-      if self.componente.operacion=="*":
-        self.componente = self.lexico.siguiente()
-        factor = self.analizaFactor()
-        arbol= arbolesArbolDerivacion.Producto(arbol, factor)
-      elif self.componente.operacion=="/":
-        self.componente = self.lexico.siguiente()
-        factor = self.analizaFactor()
-        arbol = arbolesArbolDerivacion.Division(arbol, factor)
+      operacion=self.componente
+      self.componente=self.lexico.siguiente()
+      factor=self.analizaFactor()
+      #self.componente = self.lexico.siguiente()
+      opmul=arbolesArbolDerivacion.opmul(operacion,factor)
+      arbol=arbolesArbolDerivacion.Termino(arbol,opmul)
+    #self.componente = self.lexico.siguiente()
     return arbol
 
   def analizaFactor(self):
@@ -53,36 +51,37 @@ class Sintactico:
       arbol= self.analizaExpresion()
       if self.componente.cat!= "cierra":
         raise ErrorSintactico("Aquí tocaba cerrar un paréntesis.")
-      self.componente= self.lexico.siguiente()
-      return arbol
+      arbol = arbolesArbolDerivacion.apar(arbol,arbolesArbolDerivacion.cpar())
+      arbol=arbolesArbolDerivacion.Factor(arbol)
+      self.componente=self.lexico.siguiente()
     elif self.componente.cat=="entero":
-      arbol= arbolesArbolDerivacion.Entero(self.componente.valor)
-      self.componente= self.lexico.siguiente()
-      return arbol
-    elif self.componente.cat=="real":
-      arbol = arbolesArbolDerivacion.Real(self.componente.valor)
+      arbol= arbolesArbolDerivacion.entero(self.componente.valor)
       self.componente = self.lexico.siguiente()
-      return arbol
+    elif self.componente.cat=="real":
+      arbol = arbolesArbolDerivacion.real(self.componente.valor)
+      self.componente = self.lexico.siguiente()
     elif self.componente.cat=="cadena":
-      arbol= arbolesArbolDerivacion.Cadena(self.componente.valor)
-      self.componente= self.lexico.siguiente()
-      return arbol
+      arbol= arbolesArbolDerivacion.cadena(self.componente.valor)
+      self.componente = self.lexico.siguiente()
     elif self.componente.cat=="barra":
       self.componente = self.lexico.siguiente()
       componente = self.analizaExpresion()
-      arbol=arbolesArbolDerivacion.ValorAbsoluto(componente)
+      #self.componente=self.lexico.siguiente()
       if self.componente.cat!="barra":
         raise ErrorSintactico("Aquí tocaba cerrar una barra.")
+      barra=arbolesArbolDerivacion.barra(componente)
+      arbol=arbolesArbolDerivacion.Factor(barra)
       self.componente = self.lexico.siguiente()
-      return arbol
     elif self.componente.cat=="opad":
       operacion = self.componente
       self.componente = self.lexico.siguiente()
-      componente = self.analizaFactor()
-      arbol=arbolesArbolDerivacion.CambioSigno(operacion.operacion,componente)
-      return arbol
+      termino = self.analizaTermino()
+      opad = arbolesArbolDerivacion.opad(operacion, termino)
+      arbol = arbolesArbolDerivacion.Factor(opad)
+      #self.componente = self.lexico.siguiente()
     else:
       raise ErrorSintactico("La verdad, no sé qué hacer con esto.")
+    return arbol
 
 if __name__=="__main__":
   l= sys.stdin.readline()
